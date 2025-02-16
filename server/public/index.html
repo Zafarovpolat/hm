@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Helper</title>
+</head>
+
+<body>
+    <h1>Exam Helper</h1>
+    <div id="questions"></div>
+    <script>
+        const socket = new WebSocket('ws://your-server-url/api');
+
+        socket.onopen = () => {
+            console.log('WebSocket connection established');
+        };
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+
+            if (data.type === 'send_exam') {
+                // Отображаем вопросы
+                const questionsDiv = document.getElementById('questions');
+                questionsDiv.innerHTML = data.payload.questions.map((q, i) => `
+                    <div>
+                        <h3>Вопрос ${i + 1}: ${q.text}</h3>
+                        ${q.answers.map(a => `<p>${a.key}: ${a.text}</p>`).join('')}
+                        <button onclick="sendAnswer(${i}, 'A')">Ответить A</button>
+                        <button onclick="sendAnswer(${i}, 'B')">Ответить B</button>
+                    </div>
+                `).join('');
+            }
+        };
+
+        function sendAnswer(questionIndex, answer) {
+            socket.send(JSON.stringify({
+                type: 'send_answer',
+                payload: { questionIndex, answer }
+            }));
+        }
+    </script>
+</body>
+
+</html>
