@@ -1,4 +1,4 @@
-const imbase = 'https://your-server-url'; // Замените на ваш URL
+const imbase = 'https://hm-o5uz.onrender.com/'; // Замените на ваш URL
 const socket = new WebSocket(imbase.replace(/^http/, 'ws') + '/api');
 
 socket.onopen = () => {
